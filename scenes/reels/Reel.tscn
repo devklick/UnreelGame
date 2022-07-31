@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://scenes/reels/Pointer.cs" type="Script" id=1]
+[ext_resource path="res://scenes/spinners/Spinner.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/reels/Reel.cs" type="Script" id=3]
+
+[node name="Reel" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="Pointer" type="Node2D" parent="."]
+position = Vector2( 125, 0 )
+rotation = 1.5708
+z_index = 1
+script = ExtResource( 1 )
+color = Color( 0.227451, 0.227451, 0.227451, 1 )
+
+[node name="Spinner" parent="." instance=ExtResource( 2 )]

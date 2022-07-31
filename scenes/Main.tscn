@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://scenes/reels/Reel.tscn" type="PackedScene" id=1]
+[ext_resource path="res://ui/HUD.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/Main.cs" type="Script" id=3]
+
+[node name="Main" type="Node"]
+script = ExtResource( 3 )
+
+[node name="HUD" parent="." instance=ExtResource( 2 )]
+
+[node name="Reel1" parent="." instance=ExtResource( 1 )]
+position = Vector2( 140, 140 )
+
+[node name="Reel2" parent="." instance=ExtResource( 1 )]
+position = Vector2( 400, 300 )
+rotation = -3.14159
+
+[node name="Reel3" parent="." instance=ExtResource( 1 )]
+position = Vector2( 140, 460 )
+
+[node name="Reel4" parent="." instance=ExtResource( 1 )]
+position = Vector2( 400, 620 )
+rotation = -3.14159
+
+[connection signal="ToggleSpin" from="HUD" to="." method="_on_HUD_ToggleSpin"]

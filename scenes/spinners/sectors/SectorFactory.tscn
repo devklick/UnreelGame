@@ -1,0 +1,16 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://scenes/spinners/sectors/SectorFactory.cs" type="Script" id=1]
+[ext_resource path="res://scenes/spinners/sectors/valueSector/ValueSector.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/spinners/sectors/logicSectors/speedAdjustmentSector/IncreaseSpeedSector.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/spinners/sectors/logicSectors/nudgeSector/NudgeSector.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/spinners/sectors/logicSectors/speedAdjustmentSector/DecreaseSpeedSector.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scenes/spinners/sectors/logicSectors/holdSector/HoldSector.tscn" type="PackedScene" id=6]
+
+[node name="SectorFactory" type="Node2D"]
+script = ExtResource( 1 )
+valueSectorScene = ExtResource( 2 )
+nudgeSectorScene = ExtResource( 4 )
+holdSectorScene = ExtResource( 6 )
+increaseSpeedSectorScene = ExtResource( 3 )
+decreaseSpeedSectorScene = ExtResource( 5 )

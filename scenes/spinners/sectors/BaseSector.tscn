@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scenes/spinners/sectors/BaseSector.cs" type="Script" id=1]
+
+[node name="BaseSector" type="Node2D"]
+script = ExtResource( 1 )

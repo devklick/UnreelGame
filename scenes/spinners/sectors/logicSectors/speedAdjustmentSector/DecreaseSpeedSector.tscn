@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scenes/spinners/sectors/logicSectors/speedAdjustmentSector/SpeedAdjustmentSector.cs" type="Script" id=1]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource( 1 )
+Color = Color( 0.866667, 0.196078, 0.352941, 1 )
+speedVariancePercentage = -50.0

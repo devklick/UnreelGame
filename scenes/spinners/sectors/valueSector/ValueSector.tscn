@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scenes/spinners/sectors/valueSector/ValueSector.cs" type="Script" id=1]
+
+[node name="SpinnerSector" type="Node2D"]
+script = ExtResource( 1 )
+Color = Color( 1, 1, 1, 1 )
