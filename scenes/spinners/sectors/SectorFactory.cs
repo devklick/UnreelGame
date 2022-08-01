@@ -62,15 +62,8 @@ public class SectorFactory : Node2D
         }
 
         var sectorType = SectorTypeToCreate();
-        return sectorType switch
-        {
-            SectorType.Value => CreateValueSector(pointsArc, parentSpinner),
-            SectorType.Nudge => CreateNudgeSector(pointsArc, parentSpinner),
-            SectorType.Hold => CreateHoldSector(pointsArc, parentSpinner),
-            SectorType.IncreaseSpeed => CreateIncreaseSpeedSector(pointsArc, parentSpinner),
-            SectorType.DecreaseSpeed => CreateDecreaseSpeedSector(pointsArc, parentSpinner),
-            _ => throw new NotImplementedException($"No creation logic exists for sector type {sectorType}")
-        };
+
+        return CreateSectorType(sectorType, pointsArc, parentSpinner);
     }
 
     private SectorType SectorTypeToCreate()
@@ -83,6 +76,16 @@ public class SectorFactory : Node2D
         if (chance < 0.9) return SectorType.IncreaseSpeed;
         return SectorType.DecreaseSpeed;
     }
+
+    private BaseSector CreateSectorType(SectorType sectorType, Vector2[] points, Spinner parentSpinner) => sectorType switch
+    {
+        SectorType.Value => CreateValueSector(points, parentSpinner),
+        SectorType.Nudge => CreateNudgeSector(points, parentSpinner),
+        SectorType.Hold => CreateHoldSector(points, parentSpinner),
+        SectorType.IncreaseSpeed => CreateIncreaseSpeedSector(points, parentSpinner),
+        SectorType.DecreaseSpeed => CreateDecreaseSpeedSector(points, parentSpinner),
+        _ => throw new NotImplementedException($"No creation logic exists for sector type {sectorType}")
+    };
 
     private ValueSector CreateValueSector(Vector2[] points, Spinner parentSpinner)
     {

@@ -8,10 +8,16 @@
 script = ExtResource( 3 )
 
 [node name="Pointer" type="Node2D" parent="."]
-position = Vector2( 125, 0 )
+position = Vector2( 150, 0 )
 rotation = 1.5708
 z_index = 1
 script = ExtResource( 1 )
 color = Color( 0.227451, 0.227451, 0.227451, 1 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Pointer"]
+enabled = true
+cast_to = Vector2( 0, 100 )
+collide_with_areas = true
+collide_with_bodies = false
 
 [node name="Spinner" parent="." instance=ExtResource( 2 )]
