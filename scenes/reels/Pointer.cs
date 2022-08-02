@@ -27,6 +27,11 @@ public class Pointer : Node2D
             return collider as BaseSector;
         }
 
-        return null;
+        throw new InvalidCastException("The pointer does not point to a known sector");
+    }
+
+    public void _on_HUD_ToggleSpin()
+    {
+        GD.Print("Pointer knows that the spinner stopped spinning");
     }
 }

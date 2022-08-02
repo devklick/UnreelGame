@@ -3,5 +3,6 @@
 /// </summary>
 public abstract class BaseLogicSector : BaseSector
 {
-    protected abstract void ExecuteLogic();
+    public virtual bool IsOptional { get => true; }
+    public abstract void ExecuteLogic();
 }

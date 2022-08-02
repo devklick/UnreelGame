@@ -15,7 +15,7 @@ public class NudgeSector : BaseLogicSector
     /// <summary>
     /// Nudges the spinner by one sector in the direction the spinner was last spinning in.
     /// </summary>
-    protected override void ExecuteLogic()
+    public override void ExecuteLogic()
     {
         Spinner.Nudge();
     }

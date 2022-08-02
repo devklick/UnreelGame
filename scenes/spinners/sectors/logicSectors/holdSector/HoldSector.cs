@@ -15,7 +15,7 @@ public class HoldSector : BaseLogicSector
         return sector;
     }
 
-    protected override void ExecuteLogic()
+    public override void ExecuteLogic()
     {
         base.Spinner.HoldForNSpins(_holdFor);
     }
