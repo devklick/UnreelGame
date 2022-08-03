@@ -1,7 +1,16 @@
 using Godot;
 
-public class Reel : Node2D
+public class Reel : Area2D
 {
+    #region Exports
+    #endregion
+
+    #region Signals
+    [Signal]
+    delegate void ReelLandedOn(BaseSector sector);
+    #endregion
+
+    #region Privates
     private Spinner spinner;
     private Pointer pointer;
 
@@ -23,40 +32,57 @@ public class Reel : Node2D
     /// or in "nudge selection" mode, where the user can select which reels to nudge.
     /// </summary>
     private bool canBePressed => holdSelectionEnabled || nudgeSelectionEnabled;
+    #endregion
 
-    public override void _Input(InputEvent inputEvent)
-    {
-        if (!canBePressed) return;
-
-        if (inputEvent is InputEventMouseButton)
-        {
-            // TODO: The number of spins comes from the sector that the spinner landed on. 
-            // Need to figure out how to get that here
-            if (holdSelectionEnabled) spinner.HoldForNSpins(1);
-            else if (nudgeSelectionEnabled) spinner.Nudge();
-        }
-    }
-
+    #region Override methods
     public override void _Ready()
     {
         spinner = GetNode<Spinner>("Spinner");
         pointer = GetNode<Pointer>("Pointer");
+
+        AddChild(new CollisionShape2D
+        {
+            Shape = new CircleShape2D
+            {
+                Radius = spinner.Radius
+            }
+        });
     }
 
+    public void _on_Reel_input_event(Viewport viewport, InputEvent inputEvent, Shape shape)
+    {
+        if (inputEvent is InputEventMouseButton mouseButton && mouseButton.Pressed)
+        {
+            GD.Print("Reel clicked");
+        }
+    }
+    #endregion
+
+
+    #region Public methods
     public void TrySpin() => spinner.TrySpin();
 
     public void StopSpinning()
     {
         spinner.StopSpinning();
-        var sector = pointer.PointsTo();
+        var sector = pointer.PointsTo;
         GD.Print(sector.GetType().FullName);
 
+        // If it's a mandatory logic sector, we just want to execute the logic. 
+        // Otherwise, we want to broadcast the sector the reel has landed on, sp 
+        // other components can be notified of it
         if (sector is BaseLogicSector logicSector && !logicSector.IsOptional)
         {
             logicSector.ExecuteLogic();
         }
+        else
+        {
+            EmitSignal(nameof(ReelLandedOn), sector);
+        }
     }
+    #endregion
 
+    #region EventHandler methods
     public void _on_HUD_EnableHoldSelection()
     {
         nudgeSelectionEnabled = false;
@@ -73,4 +99,5 @@ public class Reel : Node2D
     {
 
     }
+    #endregion
 }

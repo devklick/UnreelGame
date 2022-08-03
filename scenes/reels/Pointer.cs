@@ -3,31 +3,43 @@ using System;
 
 public class Pointer : Node2D
 {
+    #region Exports
     [Export]
     private Color color;
+    #endregion
+
+    #region Publics
+    public BaseSector PointsTo { get; private set; }
+    #endregion
+
     private Vector2[] points;
-    private RayCast2D rayCast2D;
     public override void _Ready()
     {
-        rayCast2D = GetNode<RayCast2D>("RayCast2D");
         points = new Vector2[3] { new Vector2(0, 20), new Vector2(10, 0), new Vector2(-10, 0) };
+
+        AddChild(new CollisionPolygon2D
+        {
+            Polygon = points,
+        });
     }
+
+    // public override void _Process(float delta)
+    // {
+    //     this.Position = new Vector2(this.Position.x - 1, this.Position.y);
+    //     base._Process(delta);
+    // }
 
     public override void _Draw()
     {
         base.DrawColoredPolygon(points, color);
     }
 
-    public BaseSector PointsTo()
+    public void _on_Pointer_area_entered(Area2D area)
     {
-        var collider = rayCast2D.GetCollider();
-
-        if (collider is BaseSector)
+        if (area is BaseSector sector)
         {
-            return collider as BaseSector;
+            PointsTo = sector;
         }
-
-        throw new InvalidCastException("The pointer does not point to a known sector");
     }
 
     public void _on_HUD_ToggleSpin()

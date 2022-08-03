@@ -3,12 +3,12 @@ using System;
 
 public class NudgeSector : BaseLogicSector
 {
-    private int _nudges;
+    public int Nudges { get; private set; }
 
     public static NudgeSector Instance(PackedScene scene, Vector2[] points, int nudges, Spinner spinner)
     {
         var sector = BaseSector.Instance<NudgeSector>(scene, points, spinner);
-        sector._nudges = nudges;
+        sector.Nudges = nudges;
         return sector;
     }
 
