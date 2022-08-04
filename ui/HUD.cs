@@ -5,10 +5,15 @@ public class HUD : CanvasLayer
 {
     [Signal]
     delegate void ToggleSpin();
+    public static string ToggleSpinSignalName = nameof(ToggleSpin);
+
     [Signal]
     delegate void EnableHoldSelection();
+    public static string EnableHoldSelectionSignalName = nameof(EnableHoldSelection);
+
     [Signal]
     delegate void EnableNudgeSelection();
+    public static string EnableNudgeSelectionSignalName = nameof(EnableHoldSelection);
 
     private Button holdButton;
     private Button nudgeButton;
@@ -27,24 +32,9 @@ public class HUD : CanvasLayer
         holdButton.Text = $"Hold ({holdsAvailable})";
         nudgeButton.Text = $"Hold ({nudgesAvailable})";
         spinButton.Text = "Spin";
+
         holdButton.Disabled = true;
         nudgeButton.Disabled = true;
-
-        // Could just do GetParent().GetChildren, but think
-        // it's more definitive coming at it from the root?
-        foreach (var child in GetTree().Root.GetNode("Main").GetChildren())
-        {
-            if (child is Reel reel)
-            {
-                Connect("EnableHoldSelection", reel, "_on_HUD_EnableHoldSelection");
-                Connect("EnableNudgeSelection", reel, "_on_HUD_EnableNudgeSelection");
-                Connect("ToggleSpin", reel, "_on_HUD_ToggleSpin");
-
-                reel.Connect("ReelLandedOn", this, nameof(_on_Reel_LandedOn));
-            }
-        }
-
-
     }
 
     public void _on_StartStopButton_pressed()

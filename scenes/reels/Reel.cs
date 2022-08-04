@@ -40,6 +40,13 @@ public class Reel : Area2D
         spinner = GetNode<Spinner>("Spinner");
         pointer = GetNode<Pointer>("Pointer");
 
+
+        var hud = GetParent().GetNode<HUD>("HUD");
+        hud.Connect(HUD.ToggleSpinSignalName, this, nameof(_on_HUD_ToggleSpin));
+        hud.Connect(HUD.EnableHoldSelectionSignalName, this, nameof(_on_HUD_EnableHoldSelection));
+        hud.Connect(HUD.EnableNudgeSelectionSignalName, this, nameof(_on_HUD_EnableNudgeSelection));
+        Connect("ReelLandedOn", hud, "_on_Reel_LandedOn");
+
         AddChild(new CollisionShape2D
         {
             Shape = new CircleShape2D
