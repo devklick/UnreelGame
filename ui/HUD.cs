@@ -42,6 +42,12 @@ public class HUD : CanvasLayer
         EmitSignal(nameof(ToggleSpin));
         spinning = !spinning;
         spinButton.Text = spinning ? "Stop" : "Spin";
+        if (spinning)
+        {
+            ResetButton();
+        }
+
+        UpdateButtonLabels();
     }
 
     public void _on_HoldButton_pressed()
@@ -62,14 +68,25 @@ public class HUD : CanvasLayer
                 nudgesAvailable += ns.Nudges;
                 break;
             case HoldSector hs:
-                holdsAvailable += hs.HoldFor;
+                holdsAvailable += hs.Holds;
                 break;
         }
 
-        holdButton.Text = $"Hold ({holdsAvailable})";
-        nudgeButton.Text = $"Nudge ({nudgesAvailable})";
+        UpdateButtonLabels();
 
         holdButton.Disabled = holdsAvailable == 0;
         nudgeButton.Disabled = nudgesAvailable == 0;
+    }
+
+    private void ResetButton()
+    {
+        nudgesAvailable = holdsAvailable = 0;
+        holdButton.Disabled = nudgeButton.Disabled = true;
+    }
+
+    private void UpdateButtonLabels()
+    {
+        holdButton.Text = $"Hold ({holdsAvailable})";
+        nudgeButton.Text = $"Nudge ({nudgesAvailable})";
     }
 }

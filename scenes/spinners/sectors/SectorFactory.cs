@@ -95,14 +95,14 @@ public class SectorFactory : Node2D
 
     private NudgeSector CreateNudgeSector(Vector2[] points, Spinner parentSpinner)
     {
-        var nudges = random.RandiRange(1, 3);
+        var nudges = random.RandiRange(1, 2);
         return NudgeSector.Instance(nudgeSectorScene, points, nudges, parentSpinner);
     }
 
     private HoldSector CreateHoldSector(Vector2[] points, Spinner parentSpinner)
     {
-        var holdFor = random.RandiRange(1, 3);
-        return HoldSector.Instance(holdSectorScene, points, holdFor, parentSpinner);
+        var holds = random.RandiRange(1, 2);
+        return HoldSector.Instance(holdSectorScene, points, holds, parentSpinner);
     }
 
     private SpeedAdjustmentSector CreateIncreaseSpeedSector(Vector2[] points, Spinner parentSpinner)

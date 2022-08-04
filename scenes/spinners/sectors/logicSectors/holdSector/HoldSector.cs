@@ -6,17 +6,17 @@ using System;
 /// </summary>
 public class HoldSector : BaseLogicSector
 {
-    public int HoldFor { get; private set; }
+    public int Holds { get; private set; }
 
-    public static HoldSector Instance(PackedScene scene, Vector2[] points, int holdFor, Spinner spinner)
+    public static HoldSector Instance(PackedScene scene, Vector2[] points, int holds, Spinner spinner)
     {
         var sector = BaseSector.Instance<HoldSector>(scene, points, spinner);
-        sector.HoldFor = holdFor;
+        sector.Holds = holds;
         return sector;
     }
 
     public override void ExecuteLogic()
     {
-        base.Spinner.HoldForNSpins(HoldFor);
+        base.Spinner.HoldForNSpins(Holds);
     }
 }
