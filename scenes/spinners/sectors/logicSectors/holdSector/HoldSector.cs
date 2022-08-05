@@ -8,9 +8,9 @@ public class HoldSector : BaseLogicSector
 {
     public int Holds { get; private set; }
 
-    public static HoldSector Instance(PackedScene scene, Vector2[] points, int holds, Spinner spinner)
+    public static HoldSector Instance(PackedScene scene, Vector2[] points, int holds, Spinner spinner, Label label)
     {
-        var sector = BaseSector.Instance<HoldSector>(scene, points, spinner);
+        var sector = BaseSector.Instance<HoldSector>(scene, points, spinner, label);
         sector.Holds = holds;
         return sector;
     }

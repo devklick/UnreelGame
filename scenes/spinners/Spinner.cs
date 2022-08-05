@@ -79,8 +79,8 @@ public class Spinner : Node2D
     {
         Rotation += direction switch
         {
-            Direction.Clockwise => SectorSize,
-            Direction.AntiClockwise => -SectorSize,
+            Direction.Clockwise => Mathf.Deg2Rad(SectorSize),
+            Direction.AntiClockwise => Mathf.Deg2Rad(-SectorSize),
             _ => throw new NotImplementedException($"Can't nudge spinner. Direction {direction} not currently supported.")
         };
     }

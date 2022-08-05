@@ -5,9 +5,9 @@ public class NudgeSector : BaseLogicSector
 {
     public int Nudges { get; private set; }
 
-    public static NudgeSector Instance(PackedScene scene, Vector2[] points, int nudges, Spinner spinner)
+    public static NudgeSector Instance(PackedScene scene, Vector2[] points, int nudges, Spinner spinner, Label label)
     {
-        var sector = BaseSector.Instance<NudgeSector>(scene, points, spinner);
+        var sector = BaseSector.Instance<NudgeSector>(scene, points, spinner, label);
         sector.Nudges = nudges;
         return sector;
     }

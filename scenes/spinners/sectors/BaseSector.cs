@@ -16,13 +16,13 @@ public class BaseSector : Area2D
         AddChild(CollisionPolygon2D);
     }
 
-    public static TSector Instance<TSector>(PackedScene scene, Vector2[] points, Spinner spinner)
+    public static TSector Instance<TSector>(PackedScene scene, Vector2[] points, Spinner spinner, Label label)
         where TSector : BaseSector
     {
         var sector = scene.Instance<TSector>();
         sector.Points = points;
         sector.Spinner = spinner;
-
+        sector.AddChild(label);
         return sector;
     }
 

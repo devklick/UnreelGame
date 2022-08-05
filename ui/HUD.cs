@@ -13,7 +13,7 @@ public class HUD : CanvasLayer
 
     [Signal]
     delegate void EnableNudgeSelection();
-    public static string EnableNudgeSelectionSignalName = nameof(EnableHoldSelection);
+    public static string EnableNudgeSelectionSignalName = nameof(EnableNudgeSelection);
 
     private Button holdButton;
     private Button nudgeButton;
@@ -35,6 +35,10 @@ public class HUD : CanvasLayer
 
         holdButton.Disabled = true;
         nudgeButton.Disabled = true;
+
+        var main = GetTree().Root.GetNode<Main>("Main");
+        main.Connect(Main.HoldsAvailableUpdatedSignalName, this, nameof(_on_Main_HoldsAvailableUpdated));
+        main.Connect(Main.NudgesAvailableUpdatedSignalName, this, nameof(_on_Main_NudgesAvailableUpdated));
     }
 
     public void _on_StartStopButton_pressed()
@@ -42,10 +46,8 @@ public class HUD : CanvasLayer
         EmitSignal(nameof(ToggleSpin));
         spinning = !spinning;
         spinButton.Text = spinning ? "Stop" : "Spin";
-        if (spinning)
-        {
-            ResetButton();
-        }
+
+        if (spinning) ResetButton();
 
         UpdateButtonLabels();
     }
@@ -60,24 +62,6 @@ public class HUD : CanvasLayer
         EmitSignal(nameof(EnableNudgeSelection));
     }
 
-    public void _on_Reel_LandedOn(BaseSector sector)
-    {
-        switch (sector)
-        {
-            case NudgeSector ns:
-                nudgesAvailable += ns.Nudges;
-                break;
-            case HoldSector hs:
-                holdsAvailable += hs.Holds;
-                break;
-        }
-
-        UpdateButtonLabels();
-
-        holdButton.Disabled = holdsAvailable == 0;
-        nudgeButton.Disabled = nudgesAvailable == 0;
-    }
-
     private void ResetButton()
     {
         nudgesAvailable = holdsAvailable = 0;
@@ -88,5 +72,18 @@ public class HUD : CanvasLayer
     {
         holdButton.Text = $"Hold ({holdsAvailable})";
         nudgeButton.Text = $"Nudge ({nudgesAvailable})";
+    }
+
+    public void _on_Main_NudgesAvailableUpdated(int value)
+    {
+        nudgesAvailable = value;
+        nudgeButton.Disabled = nudgesAvailable == 0;
+        UpdateButtonLabels();
+    }
+    public void _on_Main_HoldsAvailableUpdated(int value)
+    {
+        holdsAvailable = value;
+        holdButton.Disabled = holdsAvailable == 0;
+        UpdateButtonLabels();
     }
 }

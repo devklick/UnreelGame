@@ -53,17 +53,19 @@ public class SectorFactory : Node2D
     {
         int nbPoints = 32;
         var pointsArc = new Vector2[nbPoints + 2];
-        pointsArc[0] = Vector2.Zero;
 
+        pointsArc[0] = Vector2.Zero;
         for (int i = 0; i <= nbPoints; ++i)
         {
             float anglePoint = Mathf.Deg2Rad(angleFrom + i * (angleTo - angleFrom) / nbPoints - 90);
             pointsArc[i + 1] = new Vector2(Mathf.Cos(anglePoint), Mathf.Sin(anglePoint)) * radius;
         }
-
+        var avgX = pointsArc.Sum(p => p.x) / pointsArc.Length;
+        var avgY = pointsArc.Sum(p => p.y) / pointsArc.Length;
+        var label = new Label { RectPosition = new Vector2(avgX, avgY), Modulate = Colors.Black };
         var sectorType = SectorTypeToCreate();
 
-        return CreateSectorType(sectorType, pointsArc, parentSpinner);
+        return CreateSectorType(sectorType, pointsArc, parentSpinner, label);
     }
 
     private SectorType SectorTypeToCreate()
@@ -77,41 +79,46 @@ public class SectorFactory : Node2D
         return SectorType.DecreaseSpeed;
     }
 
-    private BaseSector CreateSectorType(SectorType sectorType, Vector2[] points, Spinner parentSpinner) => sectorType switch
+    private BaseSector CreateSectorType(SectorType sectorType, Vector2[] points, Spinner parentSpinner, Label label) => sectorType switch
     {
-        SectorType.Value => CreateValueSector(points, parentSpinner),
-        SectorType.Nudge => CreateNudgeSector(points, parentSpinner),
-        SectorType.Hold => CreateHoldSector(points, parentSpinner),
-        SectorType.IncreaseSpeed => CreateIncreaseSpeedSector(points, parentSpinner),
-        SectorType.DecreaseSpeed => CreateDecreaseSpeedSector(points, parentSpinner),
+        SectorType.Value => CreateValueSector(points, parentSpinner, label),
+        SectorType.Nudge => CreateNudgeSector(points, parentSpinner, label),
+        SectorType.Hold => CreateHoldSector(points, parentSpinner, label),
+        SectorType.IncreaseSpeed => CreateIncreaseSpeedSector(points, parentSpinner, label),
+        SectorType.DecreaseSpeed => CreateDecreaseSpeedSector(points, parentSpinner, label),
         _ => throw new NotImplementedException($"No creation logic exists for sector type {sectorType}")
     };
 
-    private ValueSector CreateValueSector(Vector2[] points, Spinner parentSpinner)
+    private ValueSector CreateValueSector(Vector2[] points, Spinner parentSpinner, Label label)
     {
         var value = random.RandiRange(1, 6);
-        return ValueSector.Instance(valueSectorScene, points, value, parentSpinner);
+        label.Text = value.ToString();
+        return ValueSector.Instance(valueSectorScene, points, value, parentSpinner, label);
     }
 
-    private NudgeSector CreateNudgeSector(Vector2[] points, Spinner parentSpinner)
+    private NudgeSector CreateNudgeSector(Vector2[] points, Spinner parentSpinner, Label label)
     {
         var nudges = random.RandiRange(1, 2);
-        return NudgeSector.Instance(nudgeSectorScene, points, nudges, parentSpinner);
+        label.Text = nudges.ToString();
+        return NudgeSector.Instance(nudgeSectorScene, points, nudges, parentSpinner, label);
     }
 
-    private HoldSector CreateHoldSector(Vector2[] points, Spinner parentSpinner)
+    private HoldSector CreateHoldSector(Vector2[] points, Spinner parentSpinner, Label label)
     {
         var holds = random.RandiRange(1, 2);
-        return HoldSector.Instance(holdSectorScene, points, holds, parentSpinner);
+        label.Text = holds.ToString();
+        return HoldSector.Instance(holdSectorScene, points, holds, parentSpinner, label);
     }
 
-    private SpeedAdjustmentSector CreateIncreaseSpeedSector(Vector2[] points, Spinner parentSpinner)
+    private SpeedAdjustmentSector CreateIncreaseSpeedSector(Vector2[] points, Spinner parentSpinner, Label label)
     {
-        return BaseSector.Instance<SpeedAdjustmentSector>(increaseSpeedSectorScene, points, parentSpinner);
+        label.Text = "+";
+        return BaseSector.Instance<SpeedAdjustmentSector>(increaseSpeedSectorScene, points, parentSpinner, label);
     }
 
-    private SpeedAdjustmentSector CreateDecreaseSpeedSector(Vector2[] points, Spinner parentSpinner)
+    private SpeedAdjustmentSector CreateDecreaseSpeedSector(Vector2[] points, Spinner parentSpinner, Label label)
     {
-        return BaseSector.Instance<SpeedAdjustmentSector>(decreaseSpeedSectorScene, points, parentSpinner);
+        label.Text = "-";
+        return BaseSector.Instance<SpeedAdjustmentSector>(decreaseSpeedSectorScene, points, parentSpinner, label);
     }
 }

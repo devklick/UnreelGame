@@ -6,11 +6,11 @@ using Godot;
 /// </summary>
 public class ValueSector : BaseSector
 {
-    private int value;
-    public static ValueSector Instance(PackedScene scene, Vector2[] points, int value, Spinner spinner)
+    public int Value { get; private set; }
+    public static ValueSector Instance(PackedScene scene, Vector2[] points, int value, Spinner spinner, Label label)
     {
-        var sector = BaseSector.Instance<ValueSector>(scene, points, spinner);
-        sector.value = value;
+        var sector = BaseSector.Instance<ValueSector>(scene, points, spinner, label);
+        sector.Value = value;
         return sector;
     }
 }
