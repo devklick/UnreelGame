@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public class SpeedAdjustmentSector : BaseLogicSector
 {
@@ -20,8 +19,11 @@ public class SpeedAdjustmentSector : BaseLogicSector
     {
         var currentSpeed = base.Spinner.WaitBeforeMoving;
         var decimalAdjustment = speedVariancePercentage / 100;
-        var newSpeed = currentSpeed + (currentSpeed * decimalAdjustment);
+        // Because the speed is actually the delay between sectors shifting rather than the actual speed of rotation, 
+        // we dont want to add to the value, we want to subtract from it. 
+        // That way, if we hit a speed increase, we reduce the delay between clicks, 
+        // and if we hit a speed decrease, we increase the delay between clicks.
+        var newSpeed = currentSpeed - (currentSpeed * decimalAdjustment);
         base.Spinner.WaitBeforeMoving = (long)newSpeed;
-        // TODO: Might need to use CallDeferred
     }
 }

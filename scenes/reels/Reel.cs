@@ -1,21 +1,29 @@
+using System;
 using Godot;
 
 public class Reel : Area2D
 {
     #region Exports
+    [Export]
+    private int reelNo;
+
     #endregion
 
     #region Signals
     [Signal]
-    public delegate void ReelLandedOn(BaseSector sector);
-    public static string ReelLandedOnSignalName = nameof(ReelLandedOn);
+    public delegate void LandedOn(int reelNo, BaseSector sector);
+    public static string LandedOnSignalName = nameof(LandedOn);
 
     [Signal]
-    public delegate void NudgeUsed();
+    public delegate void NudgeUsed(int reelNo, BaseSector newPointsTo);
     public static string NudgeUsedSignalName = nameof(NudgeUsed);
     [Signal]
-    public delegate void HoldUsed();
+    public delegate void HoldUsed(int reelNo);
     public static string HoldUsedSignalName = nameof(HoldUsed);
+    #endregion
+
+    #region Publics
+    public int ReelNo => reelNo;
     #endregion
 
     #region Privates
@@ -62,13 +70,10 @@ public class Reel : Area2D
         });
 
         var hud = GetParent().GetNode<HUD>("HUD");
-        hud.Connect(HUD.ToggleSpinSignalName, this, nameof(_on_HUD_ToggleSpin));
-        hud.Connect(HUD.EnableHoldSelectionSignalName, this, nameof(_on_HUD_EnableHoldSelection));
-        hud.Connect(HUD.EnableNudgeSelectionSignalName, this, nameof(_on_HUD_EnableNudgeSelection));
+        SubscribeToHudEvents(hud);
 
         var main = GetTree().Root.GetNode<Main>("Main");
-        main.Connect(Main.HoldsAvailableUpdatedSignalName, this, nameof(_on_Main_HoldsAvailableUpdated));
-        main.Connect(Main.NudgesAvailableUpdatedSignalName, this, nameof(_on_Main_NudgesAvailableUpdated));
+        SubscribeToMainEvents(main);
     }
 
     /// <summary>
@@ -86,8 +91,8 @@ public class Reel : Area2D
 
         if (inputEvent is InputEventMouseButton mouseButton && mouseButton.Pressed && pointer.PointsTo is BaseSector baseSector)
         {
-            if (holdSelectionEnabled) UseHold();
-            else if (nudgeSelectionEnabled) UseNudge();
+            if (holdSelectionEnabled) TryUseHold();
+            else if (nudgeSelectionEnabled) TryUseNudge();
         }
     }
     #endregion
@@ -135,18 +140,33 @@ public class Reel : Area2D
         spinner.StopSpinning();
         var sector = pointer.PointsTo;
 
-        EmitSignal(nameof(ReelLandedOn), sector);
+        EmitSignal(nameof(LandedOn), reelNo, sector);
     }
 
-    private void UseHold()
+    private void TryUseHold()
     {
+        if (holdsAvailable <= 0) return;
         spinner.HoldForNSpins(1);
-        EmitSignal(HoldUsedSignalName);
+        EmitSignal(HoldUsedSignalName, reelNo);
     }
-    private void UseNudge()
+    private void TryUseNudge()
     {
+        if (nudgesAvailable <= 0) return;
         spinner.Nudge();
-        EmitSignal(NudgeUsedSignalName);
+        EmitSignal(NudgeUsedSignalName, reelNo, (BaseSector)pointer.PointsTo);
+    }
+
+    private void SubscribeToMainEvents(Main main)
+    {
+        main.Connect(Main.HoldsAvailableUpdatedSignalName, this, nameof(_on_Main_HoldsAvailableUpdated));
+        main.Connect(Main.NudgesAvailableUpdatedSignalName, this, nameof(_on_Main_NudgesAvailableUpdated));
+    }
+
+    private void SubscribeToHudEvents(HUD hud)
+    {
+        hud.Connect(HUD.ToggleSpinSignalName, this, nameof(_on_HUD_ToggleSpin));
+        hud.Connect(HUD.EnableHoldSelectionSignalName, this, nameof(_on_HUD_EnableHoldSelection));
+        hud.Connect(HUD.EnableNudgeSelectionSignalName, this, nameof(_on_HUD_EnableNudgeSelection));
     }
     #endregion
 }

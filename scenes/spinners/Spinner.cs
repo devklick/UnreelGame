@@ -60,9 +60,10 @@ public class Spinner : Node2D
     #region Overrides
     public override void _Ready()
     {
+        var parentReel = (GetParent() as Reel);
         _random.Randomize();
         _sectorFactory = GetNode<SectorFactory>("SectorFactory");
-        _sectors = _sectorFactory.CreateSectors(numberOfSectors, SectorSize, Radius, this);
+        _sectors = _sectorFactory.CreateSectors(parentReel.ReelNo, numberOfSectors, SectorSize, Radius, this);
 
         WaitBeforeMoving = (long)_random.RandfRange(minWaitBeforeRotate * 1000, maxWaitBeforeMove * 1000);
 

@@ -28,7 +28,7 @@ public class BaseSector : Area2D
 
     public override void _Draw()
     {
-        DrawColoredPolygon(Points, Color);
-        DrawPolyline(Points, Colors.DimGray, 3f);
+        DrawColoredPolygon(Points, Color, null, null, null, true);
+        DrawPolyline(Points, Colors.DimGray, 1f, true);
     }
 }

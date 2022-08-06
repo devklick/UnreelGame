@@ -34,7 +34,7 @@ public class SectorFactory : Node2D
         random.Randomize();
     }
 
-    public BaseSector[] CreateSectors(int numberOfSectors, int sectorSize, float radius, Spinner parentSpinner)
+    public BaseSector[] CreateSectors(int reelNo, int numberOfSectors, int sectorSize, float radius, Spinner parentSpinner)
     {
         var sectors = new BaseSector[numberOfSectors];
         var maxSectorSize = 360 - sectorSize;
@@ -43,13 +43,13 @@ public class SectorFactory : Node2D
         {
             var sectorStart = sectorSize * sectorNo;
             var sectorEnd = sectorStart + sectorSize;
-            sectors[sectorNo] = CreateSector(radius, sectorStart, sectorEnd, parentSpinner);
+            sectors[sectorNo] = CreateSector(reelNo, sectorNo, radius, sectorSize, sectorStart, sectorEnd, parentSpinner);
         }
 
         return sectors;
     }
 
-    private BaseSector CreateSector(float radius, float angleFrom, float angleTo, Spinner parentSpinner)
+    private BaseSector CreateSector(int reelNo, int sectorNo, float radius, float sectorSize, float angleFrom, float angleTo, Spinner parentSpinner)
     {
         int nbPoints = 32;
         var pointsArc = new Vector2[nbPoints + 2];
@@ -60,9 +60,9 @@ public class SectorFactory : Node2D
             float anglePoint = Mathf.Deg2Rad(angleFrom + i * (angleTo - angleFrom) / nbPoints - 90);
             pointsArc[i + 1] = new Vector2(Mathf.Cos(anglePoint), Mathf.Sin(anglePoint)) * radius;
         }
-        var avgX = pointsArc.Sum(p => p.x) / pointsArc.Length;
-        var avgY = pointsArc.Sum(p => p.y) / pointsArc.Length;
-        var label = new Label { RectPosition = new Vector2(avgX, avgY), Modulate = Colors.Black };
+        var avgX = pointsArc.Sum(p => p.x) / pointsArc.Length / 2;
+        var avgY = pointsArc.Sum(p => p.y) / pointsArc.Length / 2;
+        var label = new Label { RectPosition = new Vector2(avgX, avgY), Modulate = Colors.Black, RectRotation = -90 + (sectorSize / 2) + (sectorSize * sectorNo) };
         var sectorType = SectorTypeToCreate();
 
         return CreateSectorType(sectorType, pointsArc, parentSpinner, label);
@@ -99,26 +99,26 @@ public class SectorFactory : Node2D
     private NudgeSector CreateNudgeSector(Vector2[] points, Spinner parentSpinner, Label label)
     {
         var nudges = random.RandiRange(1, 2);
-        label.Text = nudges.ToString();
+        label.Text = $"Nudge ({nudges})";
         return NudgeSector.Instance(nudgeSectorScene, points, nudges, parentSpinner, label);
     }
 
     private HoldSector CreateHoldSector(Vector2[] points, Spinner parentSpinner, Label label)
     {
         var holds = random.RandiRange(1, 2);
-        label.Text = holds.ToString();
+        label.Text = $"Hold ({holds})";
         return HoldSector.Instance(holdSectorScene, points, holds, parentSpinner, label);
     }
 
     private SpeedAdjustmentSector CreateIncreaseSpeedSector(Vector2[] points, Spinner parentSpinner, Label label)
     {
-        label.Text = "+";
+        label.Text = "Faster";
         return BaseSector.Instance<SpeedAdjustmentSector>(increaseSpeedSectorScene, points, parentSpinner, label);
     }
 
     private SpeedAdjustmentSector CreateDecreaseSpeedSector(Vector2[] points, Spinner parentSpinner, Label label)
     {
-        label.Text = "-";
+        label.Text = "Slower";
         return BaseSector.Instance<SpeedAdjustmentSector>(decreaseSpeedSectorScene, points, parentSpinner, label);
     }
 }

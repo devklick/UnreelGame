@@ -7,18 +7,27 @@
 [node name="Main" type="Node"]
 script = ExtResource( 3 )
 
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_right = 540.0
+margin_bottom = 960.0
+mouse_filter = 2
+
 [node name="HUD" parent="." instance=ExtResource( 2 )]
 
 [node name="Reel1" parent="." instance=ExtResource( 1 )]
 position = Vector2( 140, 140 )
+reelNo = 1
 
 [node name="Reel2" parent="." instance=ExtResource( 1 )]
 position = Vector2( 400, 300 )
 rotation = -3.14159
+reelNo = 2
 
 [node name="Reel3" parent="." instance=ExtResource( 1 )]
 position = Vector2( 140, 460 )
+reelNo = 3
 
 [node name="Reel4" parent="." instance=ExtResource( 1 )]
 position = Vector2( 400, 620 )
 rotation = -3.14159
+reelNo = 4
