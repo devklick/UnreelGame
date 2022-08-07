@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
@@ -90,6 +91,10 @@ public class Main : Node
     {
         foreach (var child in GetChildren())
         {
+            if (child is HUD hud)
+            {
+                SubscribeToHudEvents(hud);
+            }
             if (child is Reel reel)
             {
                 reelCount++;
@@ -102,6 +107,12 @@ public class Main : Node
     #endregion
 
     #region Event Handlers
+    public void _on_HUD_SpinPressed()
+    {
+        holdsAvailable = 0;
+        nudgesAvailable = 0;
+    }
+
     /// <summary>
     /// Handles the `LandedOn` event fired in the `Reel` class.
     /// Takes care of capturing the reel value or executing the reel logic etc.
@@ -225,6 +236,11 @@ public class Main : Node
     {
         gameState = newGameState;
         EmitSignal(GameStateUpdatedSignalName, gameState);
+    }
+
+    private void SubscribeToHudEvents(HUD hud)
+    {
+        hud.Connect(HUD.SpinPressedSignalName, this, nameof(_on_HUD_SpinPressed));
     }
     #endregion
 }

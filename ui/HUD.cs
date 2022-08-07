@@ -15,6 +15,14 @@ public class HUD : CanvasLayer
     delegate void EnableNudgeSelection();
     public static string EnableNudgeSelectionSignalName = nameof(EnableNudgeSelection);
 
+    [Signal]
+    public delegate void SpinPressed();
+    public static string SpinPressedSignalName = nameof(SpinPressed);
+
+    [Signal]
+    public delegate void StopSpinningPressed();
+    public static string StopSpinningPressedSignalName = nameof(StopSpinningPressed);
+
     private Button holdButton;
     private Button nudgeButton;
     private Button spinButton;
@@ -30,7 +38,7 @@ public class HUD : CanvasLayer
         spinButton = GetNode<Button>("StartStopButton");
 
         holdButton.Text = $"Hold ({holdsAvailable})";
-        nudgeButton.Text = $"Hold ({nudgesAvailable})";
+        nudgeButton.Text = $"Nudge ({nudgesAvailable})";
         spinButton.Text = "Spin";
 
         holdButton.Disabled = true;
@@ -44,12 +52,21 @@ public class HUD : CanvasLayer
     public void _on_StartStopButton_pressed()
     {
         EmitSignal(nameof(ToggleSpin));
-        spinning = !spinning;
-        spinButton.Text = spinning ? "Stop" : "Spin";
 
-        if (spinning) ResetButton();
+        if (spinning)
+        {
+            EmitSignal(StopSpinningPressedSignalName);
+            spinButton.Text = "Start";
+        }
+        else
+        {
+            EmitSignal(SpinPressedSignalName);
+            spinButton.Text = "Stop";
+            ResetButtons();
+        };
 
         UpdateButtonLabels();
+        spinning = !spinning;
     }
 
     public void _on_HoldButton_pressed()
@@ -62,7 +79,7 @@ public class HUD : CanvasLayer
         EmitSignal(nameof(EnableNudgeSelection));
     }
 
-    private void ResetButton()
+    private void ResetButtons()
     {
         nudgesAvailable = holdsAvailable = 0;
         holdButton.Disabled = nudgeButton.Disabled = true;
