@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 enum SectorType
@@ -36,20 +37,26 @@ public class SectorFactory : Node2D
 
     public BaseSector[] CreateSectors(int reelNo, int numberOfSectors, int sectorSize, float radius, Spinner parentSpinner)
     {
+        if (numberOfSectors < 10)
+            throw new NotSupportedException("A spinner must consist of at least 10 sectors");
+
         var sectors = new BaseSector[numberOfSectors];
         var maxSectorSize = 360 - sectorSize;
+
+        var sectorsToCreate = GetSectorsToCreate(numberOfSectors, 6);
 
         for (int sectorNo = 0; sectorNo < numberOfSectors; sectorNo++)
         {
             var sectorStart = sectorSize * sectorNo;
             var sectorEnd = sectorStart + sectorSize;
-            sectors[sectorNo] = CreateSector(reelNo, sectorNo, radius, sectorSize, sectorStart, sectorEnd, parentSpinner);
+            var sectorToCreate = sectorsToCreate[sectorNo];
+            sectors[sectorNo] = CreateSector(reelNo, sectorNo, sectorToCreate.Key, sectorToCreate.Value, radius, sectorSize, sectorStart, sectorEnd, parentSpinner);
         }
 
         return sectors;
     }
 
-    private BaseSector CreateSector(int reelNo, int sectorNo, float radius, float sectorSize, float angleFrom, float angleTo, Spinner parentSpinner)
+    private BaseSector CreateSector(int reelNo, int sectorNo, SectorType sectorType, int? sectorValue, float radius, float sectorSize, float angleFrom, float angleTo, Spinner parentSpinner)
     {
         int nbPoints = 32;
         var pointsArc = new Vector2[nbPoints + 2];
@@ -64,25 +71,37 @@ public class SectorFactory : Node2D
         var avgY = pointsArc.Sum(p => p.y) / pointsArc.Length / 2;
         var label = new Label { RectPosition = new Vector2(avgX, avgY), Modulate = Colors.Black, RectRotation = -90 + (sectorSize / 2) + (sectorSize * sectorNo) };
 
-        var sectorType = SectorTypeToCreate();
-
-        return CreateSectorType(sectorType, pointsArc, parentSpinner, label);
+        return CreateSectorType(sectorType, sectorValue, pointsArc, parentSpinner, label);
     }
 
-    private SectorType SectorTypeToCreate()
+    private List<KeyValuePair<SectorType, int?>> GetSectorsToCreate(int numberOfSectors, int maxValueSector)
     {
-        // TODO: Better distribution of types selected at "random"
+        var sectorsToCreate = new List<KeyValuePair<SectorType, int?>>();
+
+        // Each reel must have exactly one of each possible value sector
+        for (int s = 1; s <= maxValueSector; s++)
+            sectorsToCreate.Add(new KeyValuePair<SectorType, int?>(SectorType.Value, s));
+
+        // The remaining sectors should be randomly chosen to be one of the logic sectors.
+        // Multiple of the same logic sector are allowed.
+        for (int l = 0; l < numberOfSectors - maxValueSector; l++)
+            sectorsToCreate.Add(new KeyValuePair<SectorType, int?>(LogicSectorTypeToCreate(), null));
+
+        return sectorsToCreate.OrderBy(s => random.Randf()).ToList();
+    }
+
+    private SectorType LogicSectorTypeToCreate()
+    {
         var chance = random.Randf();
-        if (chance < 0.6) return SectorType.Value;
-        if (chance < 0.7) return SectorType.Nudge;
-        if (chance < 0.8) return SectorType.Hold;
-        if (chance < 0.9) return SectorType.IncreaseSpeed;
+        if (chance < 0.25) return SectorType.Nudge;
+        if (chance < 0.50) return SectorType.Hold;
+        if (chance < 0.75) return SectorType.IncreaseSpeed;
         return SectorType.DecreaseSpeed;
     }
 
-    private BaseSector CreateSectorType(SectorType sectorType, Vector2[] points, Spinner parentSpinner, Label label) => sectorType switch
+    private BaseSector CreateSectorType(SectorType sectorType, int? value, Vector2[] points, Spinner parentSpinner, Label label) => sectorType switch
     {
-        SectorType.Value => CreateValueSector(points, parentSpinner, label),
+        SectorType.Value => CreateValueSector(points, parentSpinner, label, value ?? throw new InvalidOperationException("A non-null value must be specified when creating a ValueSector")),
         SectorType.Nudge => CreateNudgeSector(points, parentSpinner, label),
         SectorType.Hold => CreateHoldSector(points, parentSpinner, label),
         SectorType.IncreaseSpeed => CreateIncreaseSpeedSector(points, parentSpinner, label),
@@ -90,9 +109,8 @@ public class SectorFactory : Node2D
         _ => throw new NotImplementedException($"No creation logic exists for sector type {sectorType}")
     };
 
-    private ValueSector CreateValueSector(Vector2[] points, Spinner parentSpinner, Label label)
+    private ValueSector CreateValueSector(Vector2[] points, Spinner parentSpinner, Label label, int value)
     {
-        var value = random.RandiRange(1, 6);
         label.Text = value.ToString();
         return ValueSector.Instance(valueSectorScene, points, value, parentSpinner, label);
     }
