@@ -67,9 +67,9 @@ public class SectorFactory : Node2D
             float anglePoint = Mathf.Deg2Rad(angleFrom + i * (angleTo - angleFrom) / nbPoints - 90);
             pointsArc[i + 1] = new Vector2(Mathf.Cos(anglePoint), Mathf.Sin(anglePoint)) * radius;
         }
-        var avgX = pointsArc.Sum(p => p.x) / pointsArc.Length / 2;
-        var avgY = pointsArc.Sum(p => p.y) / pointsArc.Length / 2;
-        var label = new Label { RectPosition = new Vector2(avgX, avgY), Modulate = Colors.Black, RectRotation = -90 + (sectorSize / 2) + (sectorSize * sectorNo) };
+        var labelX = pointsArc.Average(p => p.x) / 2;
+        var labelY = pointsArc.Average(p => p.y) / 2;
+        var label = new Label { RectPosition = new Vector2(labelX, labelY), Modulate = Colors.Black, RectRotation = -90 + (sectorSize / 2) + (sectorSize * sectorNo) };
 
         return CreateSectorType(sectorType, sectorValue, pointsArc, parentSpinner, label);
     }

@@ -220,12 +220,25 @@ public class Main : Node
     /// </summary>
     private void CheckForWin()
     {
-        if (reelValues.Count == reelCount && reelValues.Values.Distinct().Count() == 1)
+        if (reelValues.Count == reelCount)
         {
-            UpdateGameState(GameState.Won);
+            if (reelValues.Values.Distinct().Count() == 1)
+            {
+                GD.Print($"Winner with 4 of a kind - {reelValues.First().Value * reelCount} points");
+                UpdateGameState(GameState.Won);
+            }
+            else if (IsSequential(reelValues.Values.OrderBy(v => v).ToArray()))
+            {
+                GD.Print($"Winner with a straight - {reelValues.Values.Sum()} points");
+                UpdateGameState(GameState.Won);
+            }
+
             // TODO: Proper win alert
-            GD.Print($"Winner with {reelValues.First()} points");
         }
+    }
+    private bool IsSequential(int?[] array)
+    {
+        return array.Zip(array.Skip(1), (a, b) => (a + 1) == b).All(x => x);
     }
 
     /// <summary>
