@@ -105,7 +105,6 @@ public class Reel : Area2D
             {
                 if (holdSelectionEnabled) TryUseHold();
                 else if (nudgeSelectionEnabled) TryUseNudge();
-                EmitSignal(ClickedMouseDownSignalName, reelNo);
             }
             else
             {
@@ -166,12 +165,14 @@ public class Reel : Area2D
         if (holdsAvailable <= 0) return;
         spinner.HoldForNSpins(1);
         EmitSignal(HoldUsedSignalName, reelNo);
+        EmitSignal(ClickedMouseDownSignalName, reelNo);
     }
     private void TryUseNudge()
     {
         if (nudgesAvailable <= 0) return;
         spinner.Nudge();
         EmitSignal(NudgeUsedSignalName, reelNo, (BaseSector)pointer.PointsTo);
+        EmitSignal(ClickedMouseDownSignalName, reelNo);
     }
 
     private void SubscribeToMainEvents(Main main)
