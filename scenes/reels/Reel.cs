@@ -20,6 +20,14 @@ public class Reel : Area2D
     [Signal]
     public delegate void HoldUsed(int reelNo);
     public static string HoldUsedSignalName = nameof(HoldUsed);
+
+    [Signal]
+    public delegate void ClickedMouseDown(int reelNo);
+    public static string ClickedMouseDownSignalName = nameof(ClickedMouseDown);
+
+    [Signal]
+    public delegate void ClickedMouseUp(int reelNo);
+    public static string ClickedMouseUpSignalName = nameof(ClickedMouseUp);
     #endregion
 
     #region Publics
@@ -74,6 +82,8 @@ public class Reel : Area2D
 
         var main = GetTree().Root.GetNode<Main>("Main");
         SubscribeToMainEvents(main);
+
+        spinner.SetParentReelNo(reelNo);
     }
 
     /// <summary>
@@ -89,10 +99,18 @@ public class Reel : Area2D
     {
         if (!canBePressed) return;
 
-        if (inputEvent is InputEventMouseButton mouseButton && mouseButton.Pressed && pointer.PointsTo is BaseSector baseSector)
+        if (inputEvent is InputEventMouseButton mouseButton && pointer.PointsTo is BaseSector baseSector)
         {
-            if (holdSelectionEnabled) TryUseHold();
-            else if (nudgeSelectionEnabled) TryUseNudge();
+            if (mouseButton.Pressed)
+            {
+                if (holdSelectionEnabled) TryUseHold();
+                else if (nudgeSelectionEnabled) TryUseNudge();
+                EmitSignal(ClickedMouseDownSignalName, reelNo);
+            }
+            else
+            {
+                EmitSignal(ClickedMouseUpSignalName, reelNo);
+            }
         }
     }
     #endregion

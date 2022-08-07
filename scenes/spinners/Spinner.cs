@@ -68,6 +68,7 @@ public class Spinner : Node2D
         WaitBeforeMoving = (long)_random.RandfRange(minWaitBeforeRotate * 1000, maxWaitBeforeMove * 1000);
 
         foreach (var sector in _sectors) AddChild(sector);
+
     }
     public override void _Process(float delta)
     {
@@ -98,6 +99,14 @@ public class Spinner : Node2D
     }
 
     public void HoldForNSpins(int numberOfSpins) => _heldForNSpins = numberOfSpins;
+
+    public void SetParentReelNo(int reelNo)
+    {
+        foreach (var sector in _sectors)
+        {
+            sector.SetParentReelNo(reelNo);
+        }
+    }
     #endregion
 
     #region Private Methods

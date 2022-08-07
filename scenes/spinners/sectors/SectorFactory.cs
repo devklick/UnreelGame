@@ -63,6 +63,7 @@ public class SectorFactory : Node2D
         var avgX = pointsArc.Sum(p => p.x) / pointsArc.Length / 2;
         var avgY = pointsArc.Sum(p => p.y) / pointsArc.Length / 2;
         var label = new Label { RectPosition = new Vector2(avgX, avgY), Modulate = Colors.Black, RectRotation = -90 + (sectorSize / 2) + (sectorSize * sectorNo) };
+
         var sectorType = SectorTypeToCreate();
 
         return CreateSectorType(sectorType, pointsArc, parentSpinner, label);
