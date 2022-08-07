@@ -144,6 +144,8 @@ public class Reel : Area2D
             spinner.TrySpin();
             holdsAvailable = 0;
             nudgesAvailable = 0;
+            holdSelectionEnabled = false;
+            nudgeSelectionEnabled = false;
         }
         else StopSpinning();
 
